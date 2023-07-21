@@ -1,4 +1,4 @@
-package com.example.happyplaces
+package com.example.happyplaces.activities
 
 import android.Manifest
 import android.app.Activity
@@ -17,6 +17,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.happyplaces.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -34,6 +35,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
     private var cal = Calendar.getInstance()    //calendar
     private lateinit var dateSetListener : DatePickerDialog.OnDateSetListener
+
+    private var saveImageToInternalStorage : Uri? = null
+    private var mLatitude : Double = 0.0
+    private var mLongitude : Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //This call the parent constructor
@@ -57,6 +62,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
         et_date.setOnClickListener(this)
         tv_add_image.setOnClickListener(this)
+        btn_save.setOnClickListener(this)
 
     }
 
@@ -84,6 +90,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 pictureDialog.show()
             }
+            R.id.btn_save -> {
+
+            }
 
         }
     }
@@ -97,7 +106,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     try{
                         val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
 
-                        val saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
+                        saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
 
                         Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
 
@@ -114,7 +123,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             }else if(requestCode == CAMERA){
                 val thumbNail : Bitmap = data!!.extras!!.get("data") as Bitmap
 
-                val saveImageToInternalStorage = saveImageToInternalStorage(thumbNail)
+                saveImageToInternalStorage = saveImageToInternalStorage(thumbNail)
 
                 Log.e("Saved image: ", "Path :: $saveImageToInternalStorage")
 
