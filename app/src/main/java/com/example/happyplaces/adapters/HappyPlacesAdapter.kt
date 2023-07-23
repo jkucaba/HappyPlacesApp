@@ -58,7 +58,6 @@ open class HappyPlacesAdapter(
             holder.itemView.tvDescription.text = model.description
 
             holder.itemView.setOnClickListener {
-
                 if (onClickListener != null) {
                     onClickListener!!.onClick(position, model)
                 }
@@ -74,9 +73,15 @@ open class HappyPlacesAdapter(
     }
 
     /**
+     * A function to bind the onclickListener.
+     */
+    fun setOnClickListener(onClickListener: OnClickListener) {
+        this.onClickListener = onClickListener
+    }
+
+    /**
      * Sets the OnClickListener
      */
-
     interface OnClickListener {
         fun onClick(position: Int, model: HappyPlaceModel)
     }
