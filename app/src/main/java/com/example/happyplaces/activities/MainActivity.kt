@@ -1,5 +1,6 @@
 package com.example.happyplaces.activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         // Setting an click event for Fab Button and calling the AddHappyPlaceActivity.
         fabAddHappyPlace.setOnClickListener {
             val intent = Intent(this@MainActivity, AddHappyPlaceActivity::class.java)
-            startActivity(intent)
+            startActivityForResult(intent, ADD_PLACE_ACTIVITY_REQUEST_CODE)
         }
         getHappyPlacesListFromLocalDB()
     }
@@ -54,5 +55,21 @@ class MainActivity : AppCompatActivity() {
             rv_happy_places_list.visibility = View.GONE
             tv_no_records_added.visibility = View.VISIBLE
         }
+    }
+    // Call Back method  to get the Message form other Activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // check if the request code is same as what is passed  here it is 'ADD_PLACE_ACTIVITY_REQUEST_CODE'
+        if (requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                getHappyPlacesListFromLocalDB()
+            }else{
+                Log.e("Activity", "Cancelled or Back Pressed")
+            }
+        }
+    }
+    companion object {
+        var ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
     }
 }
