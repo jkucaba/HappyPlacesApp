@@ -78,6 +78,19 @@ open class HappyPlacesAdapter(
         notifyItemChanged(position) // Notify any registered observers that the item at position has changed.
     }
     /**
+     * A function to delete the added happy place detail from the local storage.
+     */
+    fun removeAt(position: Int) {
+
+        val dbHandler = DatabaseHandler(context)
+        val isDeleted = dbHandler.deleteHappyPlace(list[position])
+
+        if (isDeleted > 0) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
+    /**
      * Gets the number of items in the list
      */
     override fun getItemCount(): Int {
