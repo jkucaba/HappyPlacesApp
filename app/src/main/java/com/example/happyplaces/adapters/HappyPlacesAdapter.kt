@@ -64,7 +64,19 @@ open class HappyPlacesAdapter(
             }
         }
     }
+    /**
+     * A function to edit the added happy place detail and pass the existing details through intent.
+     */
+    fun notifyEditItem(activity: Activity, position: Int, requestCode: Int) {
+        val intent = Intent(context, AddHappyPlaceActivity::class.java)
+        intent.putExtra(MainActivity.EXTRA_PLACE_DETAILS, list[position])
+        activity.startActivityForResult(
+            intent,
+            requestCode
+        ) // Activity is started with requestCode
 
+        notifyItemChanged(position) // Notify any registered observers that the item at position has changed.
+    }
     /**
      * Gets the number of items in the list
      */
