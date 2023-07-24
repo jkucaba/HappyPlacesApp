@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -101,6 +102,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         binding?.tvAddImage?.setOnClickListener(this)
         binding?.btnSave?.setOnClickListener(this)
         binding?.etLocation?.setOnClickListener(this)
+        binding?.tvSelectCurrentLocation?.setOnClickListener(this)
 
     }
 
@@ -190,8 +192,54 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     e.printStackTrace()
                 }
             }
+            R.id.tv_select_current_location -> {
+                if(!isLocationEnabled()) {
+                    Toast.makeText(
+                        this,
+                        "Please enable location",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+                } else {
+                    Dexter.withActivity(this).withPermissions(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                        .withListener(object : MultiplePermissionsListener {
+                        override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                            if (report!!.areAllPermissionsGranted()) {
+
+                                Toast.makeText(
+                                    this@AddHappyPlaceActivity,
+                                    "Location enabled",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+
+                        override fun onPermissionRationaleShouldBeShown(
+                            permissions: MutableList<PermissionRequest>?,
+                            token: PermissionToken?
+                        ) {
+                            showRationalDialogForPermissions()
+                        }
+                    }).onSameThread()
+                        .check()
+                }
+            }
 
         }
+    }
+    /**
+     * A function which is used to verify that the location or let's GPS is enable or not of the user's device.
+     */
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
     }
 
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
