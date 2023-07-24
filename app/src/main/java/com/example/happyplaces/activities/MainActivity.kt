@@ -12,22 +12,23 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.happyplaces.R
 import com.example.happyplaces.adapters.HappyPlacesAdapter
 import com.example.happyplaces.database.DatabaseHandler
+import com.example.happyplaces.databinding.ActivityMainBinding
 import com.example.happyplaces.models.HappyPlaceModel
 import com.example.happyplaces.utils.SwipeToDeleteCallback
 import com.example.happyplaces.utils.SwipeToEditCallback
-import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    private var binding: ActivityMainBinding?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         //This call the parent constructor
         super.onCreate(savedInstanceState)
 
-        // This is used to align the xml view to this class
-        setContentView(R.layout.activity_main)
+        binding= ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding?.root) // top element of xml file is root
 
         // Setting an click event for Fab Button and calling the AddHappyPlaceActivity.
-        fabAddHappyPlace.setOnClickListener {
+        binding?.fabAddHappyPlace?.setOnClickListener {
             val intent = Intent(this@MainActivity, AddHappyPlaceActivity::class.java)
             startActivityForResult(intent, ADD_PLACE_ACTIVITY_REQUEST_CODE)
         }
@@ -38,11 +39,11 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setupHappyPlacesRecyclerView(happyPlacesList: ArrayList<HappyPlaceModel>) {
 
-        rv_happy_places_list.layoutManager = LinearLayoutManager(this)
-        rv_happy_places_list.setHasFixedSize(true)
+        binding?.rvHappyPlacesList?.layoutManager = LinearLayoutManager(this)
+        binding?.rvHappyPlacesList?.setHasFixedSize(true)
 
         val placesAdapter = HappyPlacesAdapter(this, happyPlacesList)
-        rv_happy_places_list.adapter = placesAdapter
+        binding?.rvHappyPlacesList?.adapter = placesAdapter
 
         placesAdapter.setOnClickListener(object: HappyPlacesAdapter.OnClickListener{
             override fun onClick(position: Int, model: HappyPlaceModel) {
@@ -54,17 +55,17 @@ class MainActivity : AppCompatActivity() {
 
         val editSwipeHandler = object : SwipeToEditCallback(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = rv_happy_places_list.adapter as HappyPlacesAdapter
+                val adapter = binding?.rvHappyPlacesList?.adapter as HappyPlacesAdapter
                 adapter.notifyEditItem(this@MainActivity, viewHolder.adapterPosition, ADD_PLACE_ACTIVITY_REQUEST_CODE)
             }
         }
 
         val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
-        editItemTouchHelper.attachToRecyclerView(rv_happy_places_list)
+        editItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
 
         val deleteSwipeHandler = object : SwipeToDeleteCallback(this){
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val adapter = rv_happy_places_list.adapter as HappyPlacesAdapter
+                val adapter = binding?.rvHappyPlacesList?.adapter as HappyPlacesAdapter
                 adapter.removeAt(viewHolder.adapterPosition)
 
                 getHappyPlacesListFromLocalDB()
@@ -72,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
-        deleteItemTouchHelper.attachToRecyclerView(rv_happy_places_list)
+        deleteItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
     }
 
     private fun getHappyPlacesListFromLocalDB(){
@@ -80,12 +81,12 @@ class MainActivity : AppCompatActivity() {
         val getHappyPlaceList : ArrayList<HappyPlaceModel> = dbHandler.getHappyPlacesList()
 
         if(getHappyPlaceList.size > 0){
-            rv_happy_places_list.visibility = View.VISIBLE
-            tv_no_records_added.visibility = View.GONE
+            binding?.rvHappyPlacesList?.visibility = View.VISIBLE
+            binding?.tvNoRecordsAdded?.visibility = View.GONE
             setupHappyPlacesRecyclerView(getHappyPlaceList)
         } else {
-            rv_happy_places_list.visibility = View.GONE
-            tv_no_records_added.visibility = View.VISIBLE
+            binding?.rvHappyPlacesList?.visibility = View.GONE
+            binding?.tvNoRecordsAdded?.visibility = View.VISIBLE
         }
     }
     // Call Back method  to get the Message form other Activity

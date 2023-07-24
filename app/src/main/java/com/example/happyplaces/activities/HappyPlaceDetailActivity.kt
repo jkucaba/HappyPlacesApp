@@ -4,13 +4,15 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.happyplaces.R
+import com.example.happyplaces.databinding.ActivityHappyPlaceDetailBinding
 import com.example.happyplaces.models.HappyPlaceModel
-import kotlinx.android.synthetic.main.activity_happy_place_detail.*
 
 class HappyPlaceDetailActivity : AppCompatActivity() {
+    private var binding: ActivityHappyPlaceDetailBinding?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_happy_place_detail)
+        binding = ActivityHappyPlaceDetailBinding.inflate(layoutInflater)
+        setContentView(binding?.root)
 
         var happyPlaceDetailModel : HappyPlaceModel? = null
         if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
@@ -20,18 +22,18 @@ class HappyPlaceDetailActivity : AppCompatActivity() {
         }
 
         if(happyPlaceDetailModel!= null){
-            setSupportActionBar(toolbar_happy_place_detail)
+            setSupportActionBar(binding?.toolbarHappyPlaceDetail)
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.title = happyPlaceDetailModel.title
 
-            toolbar_happy_place_detail.setNavigationOnClickListener {
+            binding?.toolbarHappyPlaceDetail?.setNavigationOnClickListener {
                 onBackPressed()
             }
 
             //assigning data to views
-            iv_place_image.setImageURI(Uri.parse(happyPlaceDetailModel.image))
-            tv_description.text = happyPlaceDetailModel.description
-            tv_location.text = happyPlaceDetailModel.location
+            binding?.ivPlaceImage?.setImageURI(Uri.parse(happyPlaceDetailModel.image))
+            binding?.tvDescription?.text = happyPlaceDetailModel.description
+            binding?.tvLocation?.text = happyPlaceDetailModel.location
 
         }
     }

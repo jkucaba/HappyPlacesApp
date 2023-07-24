@@ -12,8 +12,8 @@ import com.example.happyplaces.R
 import com.example.happyplaces.activities.AddHappyPlaceActivity
 import com.example.happyplaces.activities.MainActivity
 import com.example.happyplaces.database.DatabaseHandler
+import com.example.happyplaces.databinding.ItemHappyPlaceBinding
 import com.example.happyplaces.models.HappyPlaceModel
-import kotlinx.android.synthetic.main.item_happy_place.view.*
 
 open class HappyPlacesAdapter(
     private val context: Context,
@@ -22,6 +22,11 @@ open class HappyPlacesAdapter(
 
     private var onClickListener: OnClickListener? = null
 
+    class ViewHolder(binding: ItemHappyPlaceBinding ): RecyclerView.ViewHolder(binding.root){
+        val image=binding.ivPlaceImage
+        val title=binding.tvTitle
+        val description=binding.tvDescription
+    }
     /**
      * Inflates the item views which is designed in xml layout file
      *
@@ -30,9 +35,9 @@ open class HappyPlacesAdapter(
      */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        return MyViewHolder(
-            LayoutInflater.from(context).inflate(
-                R.layout.item_happy_place,
+        return ViewHolder(
+            ItemHappyPlaceBinding.inflate(
+                LayoutInflater.from(parent.context),
                 parent,
                 false
             )
@@ -52,10 +57,10 @@ open class HappyPlacesAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
 
-        if (holder is MyViewHolder) {
-            holder.itemView.iv_place_image.setImageURI(Uri.parse(model.image))
-            holder.itemView.tvTitle.text = model.title
-            holder.itemView.tvDescription.text = model.description
+        if (holder is ViewHolder) {
+            holder.image.setImageURI(Uri.parse(model.image))
+            holder.title.text = model.title
+            holder.description.text = model.description
 
             holder.itemView.setOnClickListener {
                 if (onClickListener != null) {
